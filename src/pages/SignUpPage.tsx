@@ -1,9 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import axios from "axios";
 
-interface Props {}
-
-const SignUpPage = (props: Props) => {
+const SignUpPage = () => {
 	const [username, setUsername] = useState<string>("");
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
@@ -33,7 +31,7 @@ const SignUpPage = (props: Props) => {
 
 	const submit = () => {
 		const body = { username, email, password };
-		axios.post("/api/1.0/users");
+		axios.post("/api/1.0/users", body);
 	};
 
 	return (

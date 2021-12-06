@@ -64,7 +64,7 @@ describe("Sign Up Page", () => {
 			expect(button).toBeEnabled();
 		});
 
-		it("sends username and password to backend after clocking button", () => {
+		it("sends username and password to backend after clicking button", () => {
 			render(<SignUpPage />);
 			const usernameInput = screen.getByLabelText("Username");
 			const emailInput = screen.getByLabelText("E-mail");
@@ -84,7 +84,6 @@ describe("Sign Up Page", () => {
 
 			const firstCallOfMockFunction = mockFn.mock.calls[0];
 			const body = firstCallOfMockFunction[1];
-			axios.post("/....", body);
 			expect(body).toEqual({
 				username: "user1",
 				email: "user1@mail.com",
