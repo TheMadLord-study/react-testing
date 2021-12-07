@@ -1,63 +1,65 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import axios from "axios";
 
+interface Form {
+	username: string;
+	email: string;
+	password: string;
+	passwordRepeat: string;
+}
+
 const SignUpPage = () => {
-	const [username, setUsername] = useState<string>("");
-	const [email, setEmail] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
-	const [passwordRepeat, setPasswordRepeat] = useState<string>("");
+	const [form, setForm] = useState<Form>({
+		username: "",
+		email: "",
+		password: "",
+		passwordRepeat: "",
+	});
 
-	const onChangeUsername = (event: ChangeEvent) => {
-		const { value } = event.target as HTMLInputElement;
-		setUsername(value);
+	const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const { id, value } = event.target;
+		setForm({ ...form, [id]: value });
 	};
 
-	const onChangeEmail = (event: ChangeEvent) => {
-		const { value } = event.target as HTMLInputElement;
-		setEmail(value);
-	};
+	let disabled = form.password !== form.passwordRepeat || !form.passwordRepeat;
 
-	const onChangePassword = (event: ChangeEvent) => {
-		const { value } = event.target as HTMLInputElement;
-		setPassword(value);
-	};
+	const submit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const body = {
+			username: form.username,
+			email: form.email,
+			password: form.password,
+		};
 
-	const onChangePasswordRepeat = (event: ChangeEvent) => {
-		const { value } = event.target as HTMLInputElement;
-		setPasswordRepeat(value);
-	};
-
-	let disabled = password !== passwordRepeat || !password || !passwordRepeat;
-
-	const submit = () => {
-		const body = { username, email, password };
-		axios.post("/api/1.0/users", body);
+		axios.post("api/1.0/users", body);
 	};
 
 	return (
 		<div>
-			<h1>Sign Up</h1>
-			<label htmlFor="username">Username</label>
-			<input id="username" value={username} onChange={onChangeUsername} />
-			<label htmlFor="email">E-mail</label>
-			<input id="email" value={email} onChange={onChangeEmail} />
-			<label htmlFor="password">Password</label>
-			<input
-				id="password"
-				type="password"
-				value={password}
-				onChange={onChangePassword}
-			/>
-			<label htmlFor="passwordRepeat">Password-Repeat</label>
-			<input
-				id="passwordRepeat"
-				type="password"
-				value={passwordRepeat}
-				onChange={onChangePasswordRepeat}
-			/>
-			<button disabled={disabled} onClick={submit}>
-				Sign Up
-			</button>
+			<form onSubmit={submit}>
+				<h1>Sign Up</h1>
+				<label htmlFor="username">Username</label>
+				<input id="username" value={form.username} onChange={onChange} />
+				<label htmlFor="email">E-mail</label>
+				<input id="email" value={form.email} onChange={onChange} />
+				<label htmlFor="password">Password</label>
+				<input
+					id="password"
+					type="password"
+					value={form.password}
+					onChange={onChange}
+				/>
+				<label htmlFor="passwordRepeat">Password-Repeat</label>
+				<input
+					id="passwordRepeat"
+					type="password"
+					value={form.passwordRepeat}
+					onChange={onChange}
+				/>
+				<button type="submit" disabled={disabled}>
+					Sign Up
+				</button>
+			</form>
 		</div>
 	);
 };
