@@ -8,6 +8,10 @@ interface Form {
 	passwordRepeat: string;
 }
 
+interface Errors {
+	username: string;
+}
+
 const SignUpPage = () => {
 	const [form, setForm] = useState<Form>({
 		username: '',
@@ -17,6 +21,7 @@ const SignUpPage = () => {
 	});
 	const [apiProgress, setApiProgress] = useState<boolean>(false);
 	const [signUpSuccess, setSignUpSuccess] = useState(false);
+	const [errors, setErrors] = useState({ username: '' } as Errors);
 
 	const onChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const { id, value } = event.target;
@@ -25,7 +30,7 @@ const SignUpPage = () => {
 
 	let disabled = form.password !== form.passwordRepeat || !form.passwordRepeat;
 
-	const submit = (e: FormEvent<HTMLFormElement>) => {
+	const submit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const body = {
 			username: form.username,
@@ -34,9 +39,16 @@ const SignUpPage = () => {
 		};
 
 		setApiProgress(true);
-		axios.post('/api/1.0/users', body).then(() => {
+		try {
+			await axios.post('/api/1.0/users', body);
 			setSignUpSuccess(true);
-		});
+		} catch (error: any) {
+			console.log(error.response);
+
+			if (error.response.status === 400) {
+				setErrors({ ...errors, ...error.response.data.validationErrors });
+			}
+		}
 	};
 
 	return (
@@ -62,6 +74,8 @@ const SignUpPage = () => {
 								onChange={onChange}
 							/>
 						</div>
+						{/* <span>{errors.username}</span> */}
+						{errors.username && <span>Username cannot be null</span>}
 						<div className='mb-3'>
 							<label className='form-label' htmlFor='email'>
 								E-mail
